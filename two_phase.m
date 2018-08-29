@@ -51,32 +51,32 @@ global coord centelem elem esurn1 esurn2 nsurn1 nsurn2 bedge inedge ...
 % contorno interior
  % unstructured mesh com furo reordenando o sentido da fronterira no
 % contorno interior
-%  x=bedge(71:78,1);
+%  x=bedge(71:78,1); % UTILIZE Benchmark23_3_18_18.msh
 %  y=bedge(71:78,2);
 %  bedge(71:78,1)=y;
 %  bedge(71:78,2)=x;
-%  bedge(71:78,4:5)=102; % benchmark23_3_GROSSO 18x18
+%  bedge(71:78,4:5)=102; % 18x18
 %  bcflag(2,1)=102;
 %  bcflag(2,2)=2;
 
 %-----------------------------
-%x=bedge(135:150,1);
+%  x=bedge(135:150,1); % UTILIZE Benchmark23_3_FINA36.msh
 %  y=bedge(135:150,2);
 %  bedge(135:150,1)=y;
 %  bedge(135:150,2)=x;
-%  bedge(135:150,4:5)=102; % 36x36 cuidado
+%  bedge(135:150,4:5)=102; % 36x36 
 %  bcflag(2,1)=102;
 %  bcflag(2,2)=2;
 
 % unstructured mesh com furo reordenando o sentido da fronterira no
 % contorno interior
-% x=bedge(289:320,1);
-% y=bedge(289:320,2);
-% bedge(289:320,1)=y;
-% bedge(289:320,2)=x;
-% bedge(289:320,4:5)=102; % benchmark23_3 72x72
-% bcflag(2,1)=102;
-% bcflag(2,2)=2;
+x=bedge(289:320,1);
+y=bedge(289:320,2);
+bedge(289:320,1)=y;
+bedge(289:320,2)=x;
+bedge(289:320,4:5)=102; % benchmark23_3 72x72
+bcflag(2,1)=102;
+bcflag(2,2)=2;
 
 % unstructured mesh com furo reordenando o sentido da fronterira no
 % contorno interior
@@ -153,13 +153,13 @@ pmetodo='nlfvLPEW';
 %% metodo de interação: iterpicard, iternewton, iterbroyden, itersecant,
 % método de itereção proprio de métodos não lineares
 %iterfreejacobian,iterdiscretnewton, JFNK
-%iteration='iterdiscretnewton';
-%iteration='iterbroyden';
-%iteration='JFNK';
-% iteration='iterpicard';
+% iteration='iterdiscretnewton';
+% iteration='iterbroyden';
+ iteration='JFNK';
 % iteration='fullpicard';
-%iteration='RRE';
-iteration='RRE';
+% iteration='RRE';
+% iteration='RRE';
+% iteration='AA';
 %iteration='iterhybrid';
 %% defina o ponto de interpolação
 interpol='LPEW';
@@ -191,7 +191,7 @@ kappa=1/3;     % cuidado no alterar !
 % durlofsky
 % shuec
 % buckley
-benchmark='benchmar5_7';
+benchmark='edqueiroz';
 %% nome do arquivo é unico para cada exemplo
 % se utiliza quando se desea simular problemas bifásicos
 namefile='Report_Production_Mesh_lamine_LFVHP.dat';

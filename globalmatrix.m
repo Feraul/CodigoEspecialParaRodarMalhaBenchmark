@@ -1,5 +1,6 @@
 function [M,I]=globalmatrix(p,pinterp,gamma,nflagface,nflagno,parameter,kmap,...
-    fonte,metodoP,w,s,benchmark,weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface)
+    fonte,metodoP,w,s,benchmark,weightDMP,auxface,wells,mobility,Hesq, ...
+    Kde, Kn, Kt, Ded,calnormface)
 
 if strcmp(metodoP,'nlfvDMP1')
     
@@ -12,7 +13,7 @@ elseif strcmp(metodoP,'nlfvLPS') || strcmp(metodoP,'nlfvPPS')
     [M,I]=assemblematrixLPSPPS(pinterp,parameter,fonte);
 elseif strcmp(metodoP,'nlfvLPEW')
     
-    [M,I]=assemblematrixGYZS(pinterp,parameter,fonte,wells,mobility,calnormface);
+    [M,I]=assemblematrixGYZS(pinterp,parameter,fonte,wells,mobility);
 elseif strcmp(metodoP,'nlfvDMPSY')
     
     [M,I]=assemblematrixDMPSY(p,pinterp,gamma,nflagface,parameter,kmap,fonte,...

@@ -1,9 +1,6 @@
 function [p,step,errorelativo,flowrate,flowresult]=picardAA(M_old,RHS_old,nitpicard,tolpicard,kmap,...
-    parameter,metodoP,auxflag,w,s,nflagface,fonte,p_old,gamma,nflagno,benchmark,...
-    weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,accelerator,calnormface)
-
-%% calculo do residuo Inicial
-R0=norm(M_old*p_old-RHS_old);
+    parameter,metodoP,auxflag,w,s,nflagface,fonte,gamma,nflagno,benchmark,...
+    weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface,R0)
 
 %% inicializando dados para iteração Picard
 step=0;
@@ -22,45 +19,50 @@ while (tolpicard<er || tolpicard==er) && (step<nitpicard)
     %% calculo da pressão pelo método direto
     %p_new=inv(M_old)*RHS_old;  % inversão com pivotamento
     %M_old=(M_old+0.2*eye(size(M_old))) % uma maneira de condicionar uma matriz
-     p_new=M_old\RHS_old;  % inversão sem pivotamento
+    % p_new=M_old\RHS_old;  % inversão sem pivotamento
     %[p_new,flag]=bicgstab((M_old+0.2*eye(size(M_old))),RHS_old,10^-8,1000);
     %flag
      %% Anderson Acc
-     if strcmp(accelerator,'AA')
-         [p_new]=AndAcc(p_old,kmap,...
-             parameter,metodoP,auxflag,w,s,nflagface,fonte,gamma,nflagno,benchmark,weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface);
+%     if strcmp(accelerator,'AA')
+if step>4
+    %p_old=p_new;
+    [p_new]=AndAcc(p_old,kmap,parameter,metodoP,auxflag,w,s,...
+        nflagface,fonte,gamma,nflagno,benchmark,weightDMP,auxface,...
+        wells,mobility,Hesq, Kde, Kn, Kt,Ded,calnormface);
+else
+    p_new=M_old\RHS_old;  % inversão sem pivotamento
+end
+%          r=p_new(:)<0;
+%          x=find(r==1);
+%          if max(x)>0
+%              p_new(x)=0;
+%          end
+%     elseif strcmp(accelerator,'RRE')
          
-         r=p_new(:)<0;
-         x=find(r==1);
-         if max(x)>0
-             p_new(x)=0;
-         end
-     elseif strcmp(accelerator,'RRE')
-         
-         if step>200
-             p_extra(:,step-1)=p_old;
-             
-             p_new = extrapRRE(p_extra);
-             r=p_new(:)<0;
-             x=find(r==1);
-             if max(x)>0
-                 p_new(x)=0;
-             end
-             
-         end
-     elseif strcmp(accelerator,'MPE')
-         if step>200
-             p_extra(:,step-1)=p_old;
-             
-             p_new = extrapMPE(p_extra);
-             r=p_new(:)<0;
-             x=find(r==1);
-             if max(x)>0
-                 p_new(x)=0;
-             end
-             
-         end
-     end
+%         if step>20
+%             p_extra(:,step-1)=p_old;
+%              
+%              p_new = extrapRRE(p_extra);
+%              r=p_new(:)<0;
+%              x=find(r==1);
+%              if max(x)>0
+%                  p_new(x)=0;
+%              end
+%              
+%          end
+%      elseif strcmp(accelerator,'MPE')
+%          if step>200
+%              p_extra(:,step-1)=p_old;
+%              
+%              p_new = extrapMPE(p_extra);
+%              r=p_new(:)<0;
+%              x=find(r==1);
+%              if max(x)>0
+%                  p_new(x)=0;
+%              end
+%              
+%          end
+%      end
     
     %% calculo da pressão usando método iterativo + precondicionador ILU
     %[L,U]=ilu(M_old,struct('type','ilutp','droptol',1e-6));
@@ -82,12 +84,9 @@ while (tolpicard<er || tolpicard==er) && (step<nitpicard)
     
     %% Calculo da matriz global
     [M_new,RHS_new]=globalmatrix(p_new,pinterp_new,gamma,nflagface,nflagno...
-        ,parameter,kmap,fonte,metodoP,w,s,benchmark,weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface);
-    
+        ,parameter,kmap,fonte,metodoP,w,s,benchmark,weightDMP,auxface,wells,...
+        mobility,Hesq, Kde, Kn, Kt, Ded,calnormface);
     %% calculo do erro
-    %A=logical(R0 ~= 0.0);
-    %B=logical(R0 == 0.0);
-    %er=A*abs(R/R0)+B*0
     
     %errorelativo(step)=er;
     
@@ -102,14 +101,16 @@ while (tolpicard<er || tolpicard==er) && (step<nitpicard)
     errorelativo(step)=er;
     
     %% atualizar
-    M_old=full(M_new);
+    %p_old=p_new;
+    M_old=M_new;
     RHS_old=RHS_new;
     p_old=M_old\RHS_old;  % inversão sem pivotamento
     %########################################################
-    p_extra(:,step)=p_old;
+    %p_extra(:,step)=p_old;
     
 end
-p=M_old\RHS_old;
+%p=M_old\RHS_old;
+p=p_old;
 pinterp=pressureinterp(p,nflagface,nflagno,w,s,auxflag,metodoP,parameter,weightDMP);
 
 if strcmp(metodoP,'nlfvDMPSY')

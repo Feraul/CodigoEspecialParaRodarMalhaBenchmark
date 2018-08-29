@@ -21,7 +21,8 @@ flowresult=0;
 
 
 % interpolação nos nós ou faces
-[pinterp]=pressureinterp(p_old,nflagface,nflagno,w,s,auxflag,metodoP,parameter,weightDMP,mobility);
+[pinterp]=pressureinterp(p_old,nflagface,nflagno,w,s,auxflag,metodoP,...
+                                             parameter,weightDMP,mobility);
 
 % calculo da matriz globlal inicial
 [M_old,RHS_old]=globalmatrix(p_old,pinterp,gamma,nflagface,nflagno,...
@@ -34,10 +35,14 @@ switch metodoP
         
         if strcmp(iteration,'AA')
             
-            [pressure,step,errorelativo,flowrate,flowresult]=picardAA(M_old,RHS_old,nit,tol,kmap,...
-                parameter,metodoP,auxflag,w,s,nflagface,fonte,p_old,gamma,...
-                nflagno,benchmark,weightDMP,auxface,wells,mobility,Hesq, ...
-                Kde, Kn, Kt, Ded,calnormface);
+            % calculo do residuo Inicial
+            R0=norm(M_old*p_old-RHS_old);
+            % Pressão inicial linear
+            %p_old=M_old\RHS_old;
+            [pressure,step,errorelativo,flowrate,flowresult]=picardAA(M_old,...
+                RHS_old,nit,tol,kmap,parameter,metodoP,auxflag,w,s,...
+                nflagface,fonte,gamma,nflagno,benchmark,weightDMP,...
+                auxface,wells,mobility,Hesq,Kde, Kn, Kt, Ded,calnormface,R0);
         elseif strcmp(iteration,'RRE')
             
             [pressure,step,errorelativo,flowrate,flowresult]=picardRRE(M_old,RHS_old,nit,tol,kmap,...
@@ -50,10 +55,11 @@ switch metodoP
                 nflagno,benchmark,weightDMP,auxface,wells,mobility,Hesq, ...
                 Kde, Kn, Kt, Ded,calnormface);
         elseif strcmp(iteration,'fullpicard')
+            
             [pressure,step,errorelativo,flowrate,flowresult]=fullpicard(M_old,RHS_old,nit,tol,kmap,...
                 parameter,metodoP,auxflag,w,s,nflagface,fonte,p_old,gamma,...
                 nflagno,benchmark,weightDMP,auxface,wells,mobility,Hesq, ...
-                Kde, Kn, Kt, Ded,accelerator,calnormface);
+                Kde, Kn, Kt, Ded,calnormface);
             
         elseif strcmp(iteration,'iterbroyden')
             
@@ -107,12 +113,12 @@ switch metodoP
                 nflagno,benchmark,p_old1,weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded);
             
         elseif strcmp(iteration, 'JFNK')
-            
-            
-            p_old1=M_old\RHS_old;
-            % calculo do residuo
+                        
+            % calculo do residuo inicial utilizando a pressão inicial
             R0=norm(M_old*p_old-RHS_old);
-            
+            % damos o chute inicial
+            p_old1=M_old\RHS_old;
+           
             % interpolação nos nós ou faces
             [pinterp1]=pressureinterp(p_old1,nflagface,nflagno,w,s,auxflag,metodoP,parameter,weightDMP,mobility);
             
@@ -120,7 +126,6 @@ switch metodoP
             [M_old1,RHS_old1]=globalmatrix(p_old1,pinterp1,gamma,nflagface,nflagno,...
                 parameter,kmap,fonte,metodoP,w,s,benchmark,weightDMP,...
                 auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface);
-            
             % calculo da pressão
             [pressure,step,errorelativo,flowrate,flowresult]= JFNK1(tol,kmap,parameter,metodoP,auxflag,w,s,nflagface,fonte,gamma,...
                 nflagno,benchmark,M_old1,RHS_old1,p_old1,R0,weightDMP,...

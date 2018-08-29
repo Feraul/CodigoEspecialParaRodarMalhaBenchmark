@@ -1,6 +1,6 @@
 function [p,step,errorelativo,flowrate,flowresult]=fullpicard(M_old,RHS_old,nitpicard,tolpicard,kmap,...
     parameter,metodoP,auxflag,w,s,nflagface,fonte,p_old,gamma,nflagno,benchmark,...
-    weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,accelerator,calnormface)
+    weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface)
 
 %% calculo do residuo Inicial
 R0=norm(M_old*p_old-RHS_old);
@@ -23,7 +23,8 @@ while (tolpicard<er || tolpicard==er) && (step<nitpicard)
     
     %% Calculo da matriz global
     [M_new,RHS_new]=globalmatrix(p_new,pinterp_new,gamma,nflagface,nflagno...
-        ,parameter,kmap,fonte,metodoP,w,s,benchmark,weightDMP,auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface);
+        ,parameter,kmap,fonte,metodoP,w,s,benchmark,weightDMP,auxface,...
+        wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface);
     
     %% calculo do erro
     R = norm(M_new*p_new - RHS_new);
@@ -37,7 +38,8 @@ while (tolpicard<er || tolpicard==er) && (step<nitpicard)
     M_old=M_new;
     RHS_old=RHS_new;
 end
-p=M_old\RHS_old;
+%p=M_old\RHS_old;
+p=p_new;
 pinterp=pressureinterp(p,nflagface,nflagno,w,s,auxflag,metodoP,parameter,weightDMP);
 
 if strcmp(metodoP,'nlfvDMPSY')

@@ -1,10 +1,8 @@
-function y = JV_APPROX1(v, R, p_old1,nflag,w,s,metodoP,parameter,...
-    kmap,nflagno,benchmark,fonte,auxflag,gamma,weightDMP,auxface,...
-    wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface,M_new,RHS_new)
+function y = JV_APPROX1(v, R, p_old,M_new,RHS_new)
 
 
 % calculate perturbation
-dim = size(p_old1,1);
+dim = size(p_old,1);
 
 if norm(v, 2) > eps
     
@@ -12,7 +10,7 @@ if norm(v, 2) > eps
     
     for i = 1 : dim
         
-        sum = sum + sqrt(eps) * (1 + p_old1(i));
+        sum = sum + sqrt(eps) * (1 + p_old(i));
         
     end
     
@@ -23,16 +21,16 @@ else
     
     for i = 1 : dim
         
-        sum = sum + sqrt(eps) * (1 + p_old1(i));
+        sum = sum + sqrt(eps) * (1 + p_old(i));
         
     end
     
     per = sum / dim;
     
 end
-%xper1 = p_old1 - per * v; % perturbed vector
-% Interpolação das pressões na arestas (faces)
-%[pinterp_new]=pressureinterp(xper1,nflag,nflagno,w,s,auxflag,metodoP,parameter,weightDMP,mobility);
+% xper1 = p_old1 - per * v; % perturbed vector
+%Interpolação das pressões na arestas (faces)
+% [pinterp_new]=pressureinterp(xper1,nflag,nflagno,w,s,auxflag,metodoP,parameter,weightDMP,mobility);
                                  
 % Calculo da matriz global
 %[M_new1,RHS_new1]=globalmatrix(xper1,pinterp_new,gamma,nflag,nflagno...
@@ -42,7 +40,7 @@ end
 % calculo do residuo
 %Rper1= M_new1*xper1 - RHS_new1;
 
-xper = p_old1 + per * v; % perturbed vector
+xper = p_old + per*v; % perturbed vector
 
 % Interpolação das pressões na arestas (faces)
 %[pinterp_new]=pressureinterp(xper,nflag,nflagno,w,s,auxflag,metodoP,parameter,weightDMP,mobility);
@@ -56,5 +54,5 @@ xper = p_old1 + per * v; % perturbed vector
 Rper= M_new*xper - RHS_new;
 
 % y = (Rper - Rper1)/(2*per);% approximation of jacobian action on krylov vector
-  y = (Rper - R)/per;% 
+ y = (Rper - R)/per;% 
 end

@@ -3,10 +3,8 @@ function [p,step,errorelativo,flowrate,flowresult] = JFNK1(tolnewton,kmap,...
     parameter,metodoP,auxflag,w,s,nflag,fonte,gamma,...
     nflagno,benchmark,M_old1,RHS_old1,p_old1,R0,weightDMP,...
     auxface,wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface)
-global elem
 % inicializando
 R= M_old1*p_old1-RHS_old1;
-x0=1e-1*ones(size(p_old1,1),1);
 er=1;
 step= 0; % iteration counter
 while tolnewton<er
@@ -17,15 +15,13 @@ while tolnewton<er
     % D.A. Knoll, D.E. Keyes e foi implementado no Matlab segui o site:
     % http://www.mathworks.com/matlabcentral/fileexchange/45170-jacobian-free-newton-krylov--jfnk--method
     % para sistema de equações dadas, nós adaptamos a nosso contexto.
-    j_v_approx1 = @(v)JV_APPROX1(v, R,p_old1,nflag,w,s,metodoP,parameter,...
-        kmap,nflagno,benchmark,fonte,auxflag,gamma,weightDMP,auxface,...
-        wells,mobility,Hesq, Kde, Kn, Kt, Ded,calnormface,M_old1,RHS_old1);
+    j_v_approx1 = @(v)JV_APPROX1(v, R,p_old1,M_old1,RHS_old1);
     
     % Calculo pelo método de iteração GMRES do Matlab
     %[v,flag,relres,iter,resvec] = gmres(j_v_approx1, R,2,1e-5,size(elem,1)*0.25,[],[],x0); % solve for Krylov vector
     
     % Calculo pelo método de iteração BICGSTAB do Matlab
-    [v,flag]=bicgstab(j_v_approx1,R,1e-5,5000);
+    [v,flag]=bicgstab(j_v_approx1,R,1e-4,5000);
     flag
     
     % Calculo da pressão na iteração k+1
@@ -52,10 +48,9 @@ while tolnewton<er
     
     % Calculo do residuo
     R= M_new*p_new - RHS_new;
-    R1=norm(R);
     if (R0 ~= 0.0)
-        er = abs(R1/R0)
-        %er = R/norm(RHS_new)
+         er = abs(norm(R)/R0)
+       % er = R/norm(RHS_new)
     else
         er = 0.0; %exact
     end

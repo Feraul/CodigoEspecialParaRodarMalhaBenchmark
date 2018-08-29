@@ -19,21 +19,21 @@ y
 //If [y] write, immediately below, only the name of mesh file with 
 //extension *.msh:
 
-Copy_of_malha6_h00138B.msh
+Benchmark23_3_FINA72.msh
 
 //OBS.: This file must be puted into folder together with *.m files 
 //or in a folder whose path will be declared immediately below:
 //IMPORTANT: if the file is puted into folder which contain the *.m
 //files, write in the statment below "no path".
 
-C:\Users\flc59_000\Documents\GitHub\CodigoEspecialParaRodarMalhaBenchmark
+C:\Users\Fernando\Documents\GitHub\CodigoEspecialParaRodarMalhaBenchmark
 
 //If [n] write, immediately below, the path which conduct to  
 //folder where the *.m files is:
 //IMPORTANT: gmsh.exe must be puted in this folder together with
 //the *.m files. Otherwise it does not work.
 
-C:\Users\flc59_000\Documents\GitHub\CodigoEspecialParaRodarMalhaBenchmark
+C:\Users\Fernando\Documents\GitHub\CodigoEspecialParaRodarMalhaBenchmark
 
 //write the name of BASE geometry file WITHOUT extension *.geo.
 //This file can serve to several simulations. Each one may have 
@@ -368,8 +368,9 @@ porosity.dat
 //group seted into "*.geo" file will be associated with the 1st code 
 //declared below and so on.
 
-1
+2
 101 0
+102 2
 
 //--------------------------------------------------------------------
 //Tratment of boundary points
@@ -385,8 +386,8 @@ porosity.dat
 //group reported to points will be associated with 1st code written
 //below.
 
-1
-101
+2
+101 102
 
 //--------------------------------------------------------------------
 //----------------------- Convergence criteria -----------------------

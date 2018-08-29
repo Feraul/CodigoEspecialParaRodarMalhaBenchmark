@@ -1,4 +1,4 @@
-function [M,I]=assemblematrixGYZS(pinterp,parameter,fonte,wells,mobility,calnormface)
+function [M,I]=assemblematrixGYZS(pinterp,parameter,fonte,wells,mobility)
 global inedge coord bedge bcflag elem elemarea
 I=sparse(size(elem,1),1);
 M=sparse(size(elem,1),size(elem,1));

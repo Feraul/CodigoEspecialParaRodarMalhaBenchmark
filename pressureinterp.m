@@ -1,4 +1,5 @@
-function [pressurinterp]=pressureinterp(p,nflagface,nflagno,w,s,auxflag,metodoP,parameter,weightDMP,mobility)
+function [pressurinterp]=pressureinterp(p,nflagface,nflagno,w,s,auxflag,...
+                                        metodoP,parameter,weightDMP,mobility)
 global inedge coord esurn1 esurn2 bedge bcflag
 
 if strcmp(metodoP,'nlfvDMPSY')
